@@ -1,10 +1,9 @@
-// Check User Middleware (for public pages)
-// Tutorial: https://www.youtube.com/watch?v=SnoAwLP1a-0 (Node.js Auth Logic)
-// Source: https://jwt.io/introduction
+// https://www.youtube.com/watch?v=SnoAwLP1a-0 (Node.js Auth Logic)
+// https://jwt.io/introduction
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Check current user (for public pages)
+// Check current user
 exports.checkUser = async (req, res, next) => {
     const token = req.cookies.token;
 
