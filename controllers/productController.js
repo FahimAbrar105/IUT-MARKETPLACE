@@ -1,10 +1,25 @@
 const Product = require('../models/Product');
+const path = require('path');
+const fs = require('fs');
+
 
 exports.getProducts = async (req, res) => {
     try {
-        const products = await Product.find({ status: 'Available' })
-            .populate('user', 'name avatar studentId');
+        let query = { status: 'Available' };
+        if (req.user) {
+            query.user = { $ne: req.user.id };
+        }
 
+
+        if (req.query.sector) {
+            query.category = { $regex: new RegExp('^' + req.query.sector + '$', 'i') };
+        }
+
+
+        if (req.query.maxPrice) {
+            query.price = { $lte: req.query.maxPrice };
+        }
+        const products = await Product.find(query).populate('user', 'name avatar studentId');
         res.render('products/index', {
             title: 'Marketplace',
             products,
@@ -41,15 +56,24 @@ exports.createProductForm = (req, res) => {
 
 exports.createProduct = async (req, res) => {
     try {
-        const { title, description, price, category } = req.body;
+        const { title, description, price, category, isAnonymous } = req.body;
+        let images = [];
+        if (req.files) {
+            req.files.forEach(file => {
+                images.push(file.path);
+            });
+        }
 
         await Product.create({
             title,
             description,
             price,
             category,
+            images,
+            isAnonymous: isAnonymous === 'on',
             user: req.user.id
         });
+
 
         res.redirect('/dashboard');
     } catch (err) {
@@ -57,7 +81,7 @@ exports.createProduct = async (req, res) => {
         res.render('products/create', {
             title: 'Sell Item',
             user: req.user,
-            error: 'Error creating product',
+            error: 'Error creating product. Please try again.',
             formData: req.body
         });
     }

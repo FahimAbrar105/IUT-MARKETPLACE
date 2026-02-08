@@ -8,19 +8,19 @@ const ProductSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        required: true
+        required: [true, 'Please add a title']
     },
     description: {
         type: String,
-        required: true
+        required: [true, 'Please add a description']
     },
     price: {
         type: Number,
-        required: true
+        required: [true, 'Please add a price']
     },
     category: {
         type: String,
-        required: true,
+        required: [true, 'Please select a category'],
         enum: ['Books', 'Electronics', 'Furniture', 'Clothing', 'Stationery', 'Other']
     },
     images: {
@@ -35,6 +35,10 @@ const ProductSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    isAnonymous: {
+        type: Boolean,
+        default: false
     }
 });
 
