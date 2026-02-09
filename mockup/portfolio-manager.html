@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Manager | IUT Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="portfolio.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo-box">88</div>
+            <div class="logo-text">
+                <h1>IUT MARKETPLACE</h1>
+                <span>SECURE STUDENT TRADING TERMINAL</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="#">MARKETS</a>
+            <a href="#">+ IPO</a>
+            <a href="#">COMMS</a>
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Adnan&background=random" alt="User">
+                <div class="user-info">
+                    <span class="name">Adnan</span>
+                    <span class="status">ONLINE <i class="fas fa-circle"
+                            style="font-size: 6px; vertical-align: middle;"></i></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="portfolio-container">
+
+        <aside class="sidebar">
+            <div class="terminal-card">
+                <div class="terminal-header">Terminal Commands</div>
+                <div class="terminal-menu">
+                    <div class="menu-item active"><i class="fas fa-circle-notch"></i> New IPO Listing</div>
+                    <div class="menu-item"><i class="fas fa-globe"></i> Global Markets</div>
+                    <div class="menu-item"><i class="fas fa-envelope"></i> Secure Comms</div>
+                    <div class="menu-item danger"><i class="fas fa-power-off"></i> Terminate Session</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="section-header" style="border-bottom: none;">
+                <div>
+                    <div class="section-title" style="font-size: 1.5rem; border-left: none; padding-left: 0;">PORTFOLIO
+                        MANAGER</div>
+                    <div class="section-info">ACCOUNT: ADNAN // ID: 220041115</div>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Credit Rating</div>
+                        <div class="stat-value rating-nice">AAA <span
+                                style="font-size: 0.7rem; font-weight: normal; color: #888;">(PRIME)</span></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Assets Under Management</div>
+                        <div class="stat-value">৳201,447</div>
+                    </div>
+                    <button class="btn-ipo">+ INITIATE IPO</button>
+                </div>
+            </header>
+
+            <section>
+                <div class="section-header">
+                    <div class="section-title">ACTIVE POSITIONS (listings)</div>
+                    <div class="section-info">8 POSITIONS OPEN</div>
+                </div>
+
+                <div class="positions-grid">
+                    <div class="position-card">
+                        <div class="pos-image"><i class="fas fa-cube"></i></div>
+                        <div class="pos-details">
+                            <div class="pos-header">
+                                <div>
+                                    <div class="pos-name">calculator</div>
+                                    <div class="pos-sector">SECTOR: ELECTRONICS</div>
+                                </div>
+                                <div class="pos-value">৳4000</div>
+                            </div>
+                            <div class="pos-actions">
+                                <button class="btn-view">VIEW</button>
+                                <button class="btn-small btn-liquidate-small">LIQUIDATE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="position-card">
+                        <div class="pos-image"><i class="fas fa-mobile-alt"></i></div>
+                        <div class="pos-details">
+                            <div class="pos-header">
+                                <div>
+                                    <div class="pos-name">phone</div>
+                                    <div class="pos-sector">SECTOR: ELECTRONICS</div>
+                                </div>
+                                <div class="pos-value">৳90000</div>
+                            </div>
+                            <div class="pos-actions">
+                                <button class="btn-view">VIEW</button>
+                                <button class="btn-small btn-liquidate-small">LIQUIDATE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="position-card">
+                        <div class="pos-image"><i class="fas fa-mobile"></i></div>
+                        <div class="pos-details">
+                            <div class="pos-header">
+                                <div>
+                                    <div class="pos-name">Phone2</div>
+                                    <div class="pos-sector">SECTOR: ELECTRONICS</div>
+                                </div>
+                                <div class="pos-value">৳6000</div>
+                            </div>
+                            <div class="pos-actions">
+                                <button class="btn-view">VIEW</button>
+                                <button class="btn-small btn-liquidate-small">LIQUIDATE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="position-card">
+                        <div class="pos-image"><i class="fas fa-gamepad"></i></div>
+                        <div class="pos-details">
+                            <div class="pos-header">
+                                <div>
+                                    <div class="pos-name">Remote</div>
+                                    <div class="pos-sector">SECTOR: ELECTRONICS</div>
+                                </div>
+                                <div class="pos-value">৳500</div>
+                            </div>
+                            <div class="pos-actions">
+                                <button class="btn-view">VIEW</button>
+                                <button class="btn-small btn-liquidate-small">LIQUIDATE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="position-card">
+                        <div class="pos-image"><i class="fas fa-laptop"></i></div>
+                        <div class="pos-details">
+                            <div class="pos-header">
+                                <div>
+                                    <div class="pos-name">Phone</div>
+                                    <div class="pos-sector">SECTOR: ELECTRONICS</div>
+                                </div>
+                                <div class="pos-value">৳600</div>
+                            </div>
+                            <div class="pos-actions">
+                                <button class="btn-view">VIEW</button>
+                                <button class="btn-small btn-liquidate-small">LIQUIDATE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="position-card">
+                        <div class="pos-image"><i class="fas fa-book"></i></div>
+                        <div class="pos-details">
+                            <div class="pos-header">
+                                <div>
+                                    <div class="pos-name">wer</div>
+                                    <div class="pos-sector">SECTOR: BOOKS</div>
+                                </div>
+                                <div class="pos-value">৳345</div>
+                            </div>
+                            <div class="pos-actions">
+                                <button class="btn-view">VIEW</button>
+                                <button class="btn-small btn-liquidate-small">LIQUIDATE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="position-card">
+                        <div class="pos-image"><i class="fas fa-chair"></i></div>
+                        <div class="pos-details">
+                            <div class="pos-header">
+                                <div>
+                                    <div class="pos-name">Sadman Saad</div>
+                                    <div class="pos-sector">SECTOR: FURNITURE</div>
+                                </div>
+                                <div class="pos-value">৳2</div>
+                            </div>
+                            <div class="pos-actions">
+                                <button class="btn-view">VIEW</button>
+                                <button class="btn-small btn-liquidate-small">LIQUIDATE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="position-card">
+                        <div class="pos-image"><i class="fas fa-user-astronaut"></i></div>
+                        <div class="pos-details">
+                            <div class="pos-header">
+                                <div>
+                                    <div class="pos-name">Freiren</div>
+                                    <div class="pos-sector">SECTOR: OTHER</div>
+                                </div>
+                                <div class="pos-value">৳100000</div>
+                            </div>
+                            <div class="pos-actions">
+                                <button class="btn-view">VIEW</button>
+                                <button class="btn-small btn-liquidate-small">LIQUIDATE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+
+            <section>
+                <div class="section-header">
+                    <div class="section-title">OPEN ORDERS (bids)</div>
+                    <div class="section-info">2 ORDERS PENDING</div>
+                </div>
+
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th width="20%">DATE</th>
+                                <th width="20%">SECTOR</th>
+                                <th width="20%">MAX STRIKE PRICE</th>
+                                <th width="20%">STATUS</th>
+                                <th width="20%" style="text-align: right;">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1/31/2026 <span class="text-muted" style="font-size: 0.7rem;">12:55 AM</span></td>
+                                <td style="color: var(--accent-blue); font-weight: bold;">FURNITURE</td>
+                                <td style="font-weight: bold;">৳500</td>
+                                <td><span class="order-status status-filled">FILLED</span></td>
+                                <td style="text-align: right;"><button class="btn-icon"><i
+                                            class="fas fa-trash"></i></button></td>
+                            </tr>
+
+                            <tr class="match-row">
+                                <td colspan="5">
+                                    <div class="match-content">
+                                        <div class="match-indicator"><i class="fas fa-check-circle"></i> MATCHING ASSETS
+                                            FOUND (1)</div>
+                                        <div class="match-item">
+                                            <div style="display: flex; gap: 10px; align-items: center;">
+                                                <i class="fas fa-cube" style="color: #555;"></i>
+                                                <div>
+                                                    <div style="font-weight: bold; font-size: 0.8rem;">Table</div>
+                                                    <div style="font-size: 0.7rem; color: var(--accent-green);">৳450
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="btn-view"
+                                                style="font-size: 0.6rem; padding: 2px 8px;">VIEW</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td>1/31/2026 <span class="text-muted" style="font-size: 0.7rem;">12:54 AM</span></td>
+                                <td style="color: var(--accent-blue); font-weight: bold;">FURNITURE</td>
+                                <td style="font-weight: bold;">৳20</td>
+                                <td><span class="order-status status-active">ACTIVE</span></td>
+                                <td style="text-align: right;"><button class="btn-icon"><i
+                                            class="fas fa-trash"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <div class="section-header">
+                    <div class="section-title">SAVED HOLDINGS & POSITIONS</div>
+                    <div class="section-info">CLEAR RECORD</div>
+                </div>
+
+                <div class="empty-state">
+                    NO LONG POSITIONS HELD
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+</body>
+
+</html>
