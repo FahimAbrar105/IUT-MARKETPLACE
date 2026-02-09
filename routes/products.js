@@ -5,7 +5,9 @@ const {
     getProduct,
     createProductForm,
     createProduct,
-    deleteProduct
+    deleteProduct,
+    createLimitOrder,
+    deleteLimitOrder
 } = require('../controllers/productController');
 const { protect } = require('../middleware/auth');
 const upload = require('../middleware/upload');
@@ -13,7 +15,6 @@ const upload = require('../middleware/upload');
 router.get('/', getProducts);
 
 router.get('/create', protect, createProductForm);
-
 router.post('/', protect, (req, res, next) => {
     upload.array('images', 5)(req, res, (err) => {
         if (err) {
@@ -28,7 +29,8 @@ router.post('/', protect, (req, res, next) => {
         next();
     });
 }, createProduct);
-
+router.post('/orders', protect, createLimitOrder);
+router.post('/orders/:id/delete', protect, deleteLimitOrder);
 router.get('/:id', getProduct);
 
 router.post('/:id/delete', protect, deleteProduct);
