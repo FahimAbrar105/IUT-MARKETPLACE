@@ -1,7 +1,7 @@
 const Product = require('../models/Product');
+const LimitOrder = require('../models/LimitOrder');
 const path = require('path');
 const fs = require('fs');
-
 
 exports.getProducts = async (req, res) => {
     try {
@@ -10,11 +10,9 @@ exports.getProducts = async (req, res) => {
             query.user = { $ne: req.user.id };
         }
 
-
         if (req.query.sector) {
             query.category = { $regex: new RegExp('^' + req.query.sector + '$', 'i') };
         }
-
 
         if (req.query.maxPrice) {
             query.price = { $lte: req.query.maxPrice };
@@ -57,6 +55,8 @@ exports.createProductForm = (req, res) => {
 exports.createProduct = async (req, res) => {
     try {
         const { title, description, price, category, isAnonymous } = req.body;
+
+
         let images = [];
         if (req.files) {
             req.files.forEach(file => {
@@ -75,6 +75,20 @@ exports.createProduct = async (req, res) => {
         });
 
 
+        const matchingOrders = await LimitOrder.find({
+            sector: category,
+            maxPrice: { $gte: price },
+            status: 'ACTIVE',
+            user: { $ne: req.user.id }
+        });
+
+        if (matchingOrders.length > 0) {
+            for (const order of matchingOrders) {
+                order.status = 'FILLED';
+                await order.save();
+            }
+        }
+
         res.redirect('/dashboard');
     } catch (err) {
         console.error(err);
@@ -86,6 +100,7 @@ exports.createProduct = async (req, res) => {
         });
     }
 };
+
 
 exports.deleteProduct = async (req, res) => {
     try {
@@ -100,6 +115,45 @@ exports.deleteProduct = async (req, res) => {
         }
 
         await product.deleteOne();
+
+        res.redirect('/dashboard');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/dashboard');
+    }
+};
+
+exports.createLimitOrder = async (req, res) => {
+    try {
+        const { sector, maxPrice } = req.body;
+
+        await LimitOrder.create({
+            user: req.user.id,
+            sector,
+            maxPrice
+        });
+
+        res.redirect('/products');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/products');
+    }
+};
+
+exports.deleteLimitOrder = async (req, res) => {
+    try {
+        const order = await LimitOrder.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ success: false, error: 'Order not found' });
+        }
+
+        if (order.user.toString() !== req.user.id) {
+            return res.status(401).json({ success: false, error: 'Not authorized' });
+        }
+
+        await order.deleteOne();
+        console.log(`[ORDER] Limit Order ${req.params.id} cancelled by user`);
 
         res.redirect('/dashboard');
     } catch (err) {
