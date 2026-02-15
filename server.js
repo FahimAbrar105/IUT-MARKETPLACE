@@ -29,6 +29,7 @@ const server = http.createServer(app);
 // Socket.io Setup
 
 const io = socketIo(server);
+app.set('io', io);
 
 // Middleware Configuration
 app.use(express.json());
@@ -109,8 +110,8 @@ app.get('/dashboard', protect, preventCache, async (req, res) => {
         return orderObj;
     }));
 
-    res.render('dashboard', {
-        title: 'Dashboard',
+    // Return JSON for React frontend
+    res.json({
         user: req.user,
         myProducts,
         myOrders: ordersWithMatches

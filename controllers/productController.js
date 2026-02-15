@@ -18,8 +18,7 @@ exports.getProducts = async (req, res) => {
             query.price = { $lte: req.query.maxPrice };
         }
         const products = await Product.find(query).populate('user', 'name avatar studentId');
-        res.render('products/index', {
-            title: 'Marketplace',
+        res.json({
             products,
             user: req.user
         });
@@ -37,8 +36,7 @@ exports.getProduct = async (req, res) => {
             return res.render('error', { error: 'Product not found' });
         }
 
-        res.render('products/details', {
-            title: product.title,
+        res.json({
             product,
             user: req.user
         });
@@ -89,14 +87,12 @@ exports.createProduct = async (req, res) => {
             }
         }
 
-        res.redirect('/dashboard');
+        res.json({ success: true, message: 'Product created successfully' });
     } catch (err) {
         console.error(err);
-        res.render('products/create', {
-            title: 'Sell Item',
-            user: req.user,
-            error: 'Error creating product. Please try again.',
-            formData: req.body
+        res.status(400).json({
+            success: false,
+            error: err.message || 'Error creating product'
         });
     }
 };
@@ -133,10 +129,10 @@ exports.createLimitOrder = async (req, res) => {
             maxPrice
         });
 
-        res.redirect('/products');
+        res.json({ success: true, message: 'Limit Order Created' });
     } catch (err) {
         console.error(err);
-        res.redirect('/products');
+        res.status(500).json({ success: false, error: 'Server Error' });
     }
 };
 
@@ -155,9 +151,9 @@ exports.deleteLimitOrder = async (req, res) => {
         await order.deleteOne();
         console.log(`[ORDER] Limit Order ${req.params.id} cancelled by user`);
 
-        res.redirect('/dashboard');
+        res.json({ success: true, message: 'Limit Order Cancelled' });
     } catch (err) {
         console.error(err);
-        res.redirect('/dashboard');
+        res.status(500).json({ success: false, error: 'Server Error' });
     }
 };
