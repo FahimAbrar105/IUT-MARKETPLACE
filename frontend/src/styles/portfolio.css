@@ -1,0 +1,565 @@
+/* ===== DARK STOCK TERMINAL THEME — scoped to .portfolio-page ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+.portfolio-page {
+    background: #0a0a0f;
+    color: #c8c9cf;
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+}
+
+/* ── Navbar ── */
+.portfolio-page .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 36px;
+    border-bottom: 1px solid #1a1a2e;
+    background: #0d0d14;
+}
+
+.portfolio-page .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.portfolio-page .logo-box {
+    background: linear-gradient(135deg, #00ff9d, #00b4d8);
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 900;
+    font-size: 1.6rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.portfolio-page .logo-text h1 {
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #ffffff;
+    margin: 0;
+}
+
+.portfolio-page .logo-text span {
+    font-size: 0.65rem;
+    color: #555;
+    letter-spacing: 3px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.portfolio-page .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.portfolio-page .nav-right a {
+    color: #8b8d96;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.portfolio-page .nav-right a:hover {
+    color: #00ff9d;
+    text-decoration: none;
+}
+
+.portfolio-page .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 15px;
+    border-left: 1px solid #1a1a2e;
+}
+
+.portfolio-page .user-profile img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #00ff9d;
+}
+
+.portfolio-page .user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-page .user-info .name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+.portfolio-page .user-info .status {
+    font-size: 0.65rem;
+    color: #00ff9d;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Layout ── */
+.portfolio-page .portfolio-container {
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+/* ── Sidebar ── */
+.portfolio-page .sidebar {
+    width: 240px;
+    border-right: 1px solid #1a1a2e;
+    padding: 24px 18px;
+    background: #0d0d14;
+    flex-shrink: 0;
+}
+
+.portfolio-page .terminal-card {
+    background: #111118;
+    border: 1px solid #1a1a2e;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.portfolio-page .terminal-header {
+    background: #1a1a2e;
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #8b8d96;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.portfolio-page .terminal-menu {
+    padding: 5px 0;
+}
+
+.portfolio-page .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: #8b8d96;
+    text-decoration: none;
+    transition: all 0.15s;
+    cursor: pointer;
+}
+
+.portfolio-page .menu-item:hover,
+.portfolio-page .menu-item.active {
+    background: #141420;
+    color: #00ff9d;
+    text-decoration: none;
+}
+
+.portfolio-page .menu-item.danger:hover {
+    color: #ff3366;
+}
+
+/* ── Main Content ── */
+.portfolio-page .main-content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+}
+
+/* ── Section Headers ── */
+.portfolio-page .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #1a1a2e;
+}
+
+.portfolio-page .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #ffffff;
+    border-left: 3px solid #00ff9d;
+    padding-left: 12px;
+}
+
+.portfolio-page .section-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #555;
+    letter-spacing: 1px;
+}
+
+/* ── Header Stats ── */
+.portfolio-page .header-stats {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.portfolio-page .stat-item {
+    text-align: right;
+}
+
+.portfolio-page .stat-label {
+    font-size: 0.7rem;
+    color: #555;
+    letter-spacing: 1px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+}
+
+.portfolio-page .stat-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.portfolio-page .rating-nice {
+    color: #00ff9d;
+}
+
+/* ── IPO Button ── */
+.portfolio-page .btn-ipo {
+    background: linear-gradient(135deg, #00ff9d 0%, #00b4d8 100%);
+    color: #000;
+    border: none;
+    padding: 10px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.portfolio-page .btn-ipo:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 255, 157, 0.3);
+    text-decoration: none;
+}
+
+/* ── Position Cards ── */
+.portfolio-page .positions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.portfolio-page .position-card {
+    display: flex;
+    gap: 14px;
+    background: #111118;
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    padding: 16px;
+    transition: border-color 0.2s;
+}
+
+.portfolio-page .position-card:hover {
+    border-color: #00ff9d33;
+}
+
+.portfolio-page .pos-image {
+    width: 65px;
+    height: 65px;
+    background: #1a1a2e;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.portfolio-page .pos-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.portfolio-page .pos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.portfolio-page .pos-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #e0e0e0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.portfolio-page .pos-sector {
+    font-size: 0.7rem;
+    color: #555;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    margin-top: 3px;
+}
+
+.portfolio-page .pos-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #00ff9d;
+}
+
+.portfolio-page .pos-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.portfolio-page .btn-view {
+    background: #1a1a2e;
+    color: #8b8d96;
+    border: none;
+    padding: 5px 14px;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.portfolio-page .btn-view:hover {
+    background: #252540;
+    color: #00ff9d;
+    text-decoration: none;
+}
+
+.portfolio-page .btn-small {
+    border: none;
+    padding: 5px 14px;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.portfolio-page .btn-liquidate-small {
+    background: rgba(255, 51, 102, 0.15);
+    color: #ff3366;
+}
+
+.portfolio-page .btn-liquidate-small:hover {
+    background: rgba(255, 51, 102, 0.3);
+}
+
+/* ── Orders Table ── */
+.portfolio-page .orders-table-container {
+    overflow-x: auto;
+}
+
+.portfolio-page .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.portfolio-page .orders-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: #555;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid #1a1a2e;
+    font-weight: 600;
+}
+
+.portfolio-page .orders-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #0f0f18;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: #c8c9cf;
+}
+
+.portfolio-page .order-status {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.portfolio-page .status-active {
+    background: rgba(0, 180, 216, 0.15);
+    color: #00b4d8;
+}
+
+.portfolio-page .status-filled {
+    background: rgba(0, 255, 157, 0.15);
+    color: #00ff9d;
+}
+
+.portfolio-page .btn-icon {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 6px;
+    transition: color 0.15s;
+}
+
+.portfolio-page .btn-icon:hover {
+    color: #ff3366;
+}
+
+/* ── Match Row ── */
+.portfolio-page .match-row td {
+    padding: 0 12px 10px 12px;
+    border-bottom: 1px solid #1a1a2e;
+}
+
+.portfolio-page .match-content {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.portfolio-page .match-indicator {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #00ff9d;
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.portfolio-page .match-item {
+    background: #111118;
+    border: 1px solid #1a1a2e;
+    border-radius: 4px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Empty State ── */
+.portfolio-page .empty-state {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #333;
+    letter-spacing: 1px;
+    padding: 40px;
+    text-align: center;
+    background: #111118;
+    border: 1px dashed #1a1a2e;
+    border-radius: 8px;
+}
+
+/* ── Limit Order Form ── */
+.portfolio-page .limit-order-form {
+    background: #111118;
+    border: 1px solid #1a1a2e;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.portfolio-page .limit-order-form label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #8b8d96;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.portfolio-page .limit-order-form select,
+.portfolio-page .limit-order-form input {
+    background: #0a0a0f;
+    border: 1px solid #1a1a2e;
+    color: #ffffff;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.portfolio-page .limit-order-form select:focus,
+.portfolio-page .limit-order-form input:focus {
+    outline: none;
+    border-color: #00ff9d;
+}
+
+.portfolio-page .form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.portfolio-page .btn-submit {
+    background: linear-gradient(135deg, #00ff9d 0%, #00b4d8 100%);
+    color: #000;
+    border: none;
+    padding: 8px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.portfolio-page .btn-cancel {
+    background: #1a1a2e;
+    color: #8b8d96;
+    border: none;
+    padding: 8px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* ── Muted Text ── */
+.portfolio-page .text-muted {
+    color: #555;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .portfolio-page .sidebar {
+        display: none;
+    }
+
+    .portfolio-page .portfolio-container {
+        flex-direction: column;
+    }
+
+    .portfolio-page .main-content {
+        padding: 15px;
+    }
+
+    .portfolio-page .navbar {
+        padding: 10px 15px;
+    }
+
+    .portfolio-page .positions-grid {
+        grid-template-columns: 1fr;
+    }
+}
