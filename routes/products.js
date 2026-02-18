@@ -7,7 +7,9 @@ const {
     createProduct,
     deleteProduct,
     createLimitOrder,
-    deleteLimitOrder
+    deleteLimitOrder,
+    holdProduct,
+    unholdProduct
 } = require('../controllers/productController');
 const { protect } = require('../middleware/auth');
 const upload = require('../middleware/upload');
@@ -34,5 +36,7 @@ router.post('/orders/:id/delete', protect, deleteLimitOrder);
 router.get('/:id', getProduct);
 
 router.post('/:id/delete', protect, deleteProduct);
+router.post('/:id/hold', protect, holdProduct);
+router.delete('/:id/hold', protect, unholdProduct);
 
 module.exports = router;
