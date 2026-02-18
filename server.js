@@ -89,6 +89,7 @@ const preventCache = require('./middleware/preventCache');
 app.get('/dashboard', protect, preventCache, async (req, res) => {
     const Product = require('./models/Product');
     const LimitOrder = require('./models/LimitOrder');
+    const User = require('./models/User');
 
     // Fetch products owned by the user
     const myProducts = await Product.find({ user: req.user.id });
@@ -109,11 +110,23 @@ app.get('/dashboard', protect, preventCache, async (req, res) => {
         return orderObj;
     }));
 
+<<<<<<< Updated upstream
     res.render('dashboard', {
         title: 'Dashboard',
+=======
+    // Fetch watchlist (holdings) with populated product data
+    const userWithWatchlist = await User.findById(req.user.id).populate({
+        path: 'watchlist',
+        select: 'title price category images status createdAt'
+    });
+
+    // Return JSON for React frontend
+    res.json({
+>>>>>>> Stashed changes
         user: req.user,
         myProducts,
-        myOrders: ordersWithMatches
+        myOrders: ordersWithMatches,
+        watchlist: userWithWatchlist.watchlist || []
     });
 });
 

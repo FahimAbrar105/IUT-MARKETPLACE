@@ -9,7 +9,7 @@ const LimitOrderSchema = new mongoose.Schema({
     sector: {
         type: String,
         required: true,
-        enum: ['Electronics', 'Clothing', 'Books', 'Furniture', 'Other']
+        enum: ['Electronics', 'Clothing', 'Books', 'Furniture', 'Stationery', 'Other']
     },
     maxPrice: {
         type: Number,

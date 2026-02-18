@@ -50,7 +50,11 @@ const UserSchema = new mongoose.Schema({
     lastLogout: {
         type: Date,
         default: null
-    }
+    },
+    watchlist: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }]
 });
 
 // https://www.npmjs.com/package/bcryptjs
