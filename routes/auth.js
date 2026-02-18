@@ -79,16 +79,17 @@ router.get('/google/callback', (req, res, next) => {
                     // Email failed
                 }
             }
-            return res.redirect(`/auth/verify?email=${user.email}`);
+            const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+            return res.redirect(`${FRONTEND_URL}/login?error=Verification email sent to ${user.email}`);
         }
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
 
             // Check if profile is complete
-            if (!user.studentId || !user.contactNumber) {
-                return res.redirect('/auth/complete-profile');
-            }
+            // if (!user.studentId || !user.contactNumber) {
+            //     return res.redirect('/auth/complete-profile');
+            // }
 
             const jwt = require('jsonwebtoken');
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -97,7 +98,8 @@ router.get('/google/callback', (req, res, next) => {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: 30 * 24 * 60 * 60 * 1000
             });
-            res.redirect('/dashboard');
+            const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+            res.redirect(`${FRONTEND_URL}/dashboard`);
         });
     })(req, res, next);
 });
@@ -149,16 +151,17 @@ router.get('/github/callback', (req, res, next) => {
                     // Email failed
                 }
             }
-            return res.redirect(`/auth/verify?email=${user.email}`);
+            const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+            return res.redirect(`${FRONTEND_URL}/login?error=Verification email sent to ${user.email}`);
         }
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
 
             // Check if profile is complete
-            if (!user.studentId || !user.contactNumber) {
-                return res.redirect('/auth/complete-profile');
-            }
+            // if (!user.studentId || !user.contactNumber) {
+            //     return res.redirect('/auth/complete-profile');
+            // }
 
             const jwt = require('jsonwebtoken');
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -167,7 +170,8 @@ router.get('/github/callback', (req, res, next) => {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: 30 * 24 * 60 * 60 * 1000
             });
-            res.redirect('/dashboard');
+            const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+            res.redirect(`${FRONTEND_URL}/dashboard`);
         });
     })(req, res, next);
 });
