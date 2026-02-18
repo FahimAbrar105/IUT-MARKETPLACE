@@ -15,13 +15,17 @@ const PrivateRoute = ({ children }) => {
   return children; // For now, bypass auth check in frontend routing to test connection
 };
 
+import Register from './pages/Register';
+import VerifyOtp from './pages/VerifyOtp';
+
 function App() {
   return (
     <Router>
       {/* <AuthProvider> */}
       <Routes>
         <Route path="/login" element={<Login />} />
-        {/* <Route path="/register" element={<Register />} /> */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
 
         <Route path="/dashboard" element={
