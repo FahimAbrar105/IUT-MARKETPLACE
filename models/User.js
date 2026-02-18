@@ -47,6 +47,10 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    watchlist: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }],
     lastLogout: {
         type: Date,
         default: null

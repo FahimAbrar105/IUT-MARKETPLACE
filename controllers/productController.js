@@ -18,9 +18,19 @@ exports.getProducts = async (req, res) => {
             query.price = { $lte: req.query.maxPrice };
         }
         const products = await Product.find(query).populate('user', 'name avatar studentId');
+
+        // Get user's watchlist for hold/unhold state
+        let watchlist = [];
+        if (req.user) {
+            const User = require('../models/User');
+            const userData = await User.findById(req.user.id).select('watchlist');
+            watchlist = userData ? userData.watchlist.map(id => id.toString()) : [];
+        }
+
         res.json({
             products,
-            user: req.user
+            user: req.user,
+            watchlist
         });
     } catch (err) {
         console.error(err);
@@ -152,6 +162,46 @@ exports.deleteLimitOrder = async (req, res) => {
         console.log(`[ORDER] Limit Order ${req.params.id} cancelled by user`);
 
         res.json({ success: true, message: 'Limit Order Cancelled' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+};
+
+exports.holdProduct = async (req, res) => {
+    try {
+        const User = require('../models/User');
+        const product = await Product.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({ success: false, error: 'Product not found' });
+        }
+
+        const user = await User.findById(req.user.id);
+
+        if (user.watchlist.includes(req.params.id)) {
+            return res.status(400).json({ success: false, error: 'Already in holdings' });
+        }
+
+        user.watchlist.push(req.params.id);
+        await user.save();
+
+        res.json({ success: true, message: 'Position acquired', watchlist: user.watchlist });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+};
+
+exports.unholdProduct = async (req, res) => {
+    try {
+        const User = require('../models/User');
+        const user = await User.findById(req.user.id);
+
+        user.watchlist = user.watchlist.filter(id => id.toString() !== req.params.id);
+        await user.save();
+
+        res.json({ success: true, message: 'Position liquidated', watchlist: user.watchlist });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, error: 'Server Error' });
