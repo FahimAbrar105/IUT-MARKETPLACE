@@ -100,7 +100,7 @@ const Register = () => {
                                         name="name"
                                         value={name}
                                         onChange={onChange}
-                                        placeholder="John Doe"
+                                        placeholder="Fahim Abrar"
                                         required
                                     />
                                 </div>
@@ -132,7 +132,7 @@ const Register = () => {
                                         name="studentId"
                                         value={studentId}
                                         onChange={onChange}
-                                        placeholder="190041234"
+                                        placeholder="220041105"
                                         required
                                     />
                                 </div>
