@@ -1,19 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import io from 'socket.io-client';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+
+const socket = io('http://localhost:5000');
+
 
 const ChatRoom = () => {
-    const { userId } = useParams();
+    const { userId: otherUserId } = useParams();
     const [searchParams] = useSearchParams();
     const productId = searchParams.get('productId');
+    const { user } = useAuth();
 
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const [chatPartner, setChatPartner] = useState(null);
-    const [currentUser, setCurrentUser] = useState(null); // Need to know who I am
-    const socket = useRef(null);
-    const scrollRef = useRef(null);
+    const [otherUser, setOtherUser] = useState(null);
+    const [title, setTitle] = useState('Chat');
+    const [loading, setLoading] = useState(true);
+    const messagesEndRef = useRef(null);
+    const [isAnonymousContext, setIsAnonymousContext] = useState(false);
 
     useEffect(() => {
         if (!user || !otherUserId) return;
@@ -84,45 +90,123 @@ const ChatRoom = () => {
     if (loading) return <div className="text-center text-text-secondary py-20 font-mono">ESTABLISHING SECURE CONNECTION...</div>;
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', maxWidth: '600px', margin: 'auto' }}>
-            <div style={{ padding: '10px', background: '#f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Link to="/chat">Back</Link>
-                <h3>{chatPartner.name} {chatPartner.isAnonymous && '(Anonymous)'}</h3>
-            </div>
+        <div className="container mx-auto px-4 py-8 max-w-5xl h-[85vh] flex flex-col">
+            {/* Terminal Window Frame */}
+            <div className="bg-surface border border-border rounded-lg shadow-2xl overflow-hidden flex flex-col flex-grow relative">
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '10px', display: 'flex', flexDirection: 'column' }}>
-                {messages.map((msg, idx) => {
-                    const isMe = msg.sender === currentUser.id || msg.sender === currentUser._id;
-                    return (
-                        <div key={idx} style={{
-                            alignSelf: isMe ? 'flex-end' : 'flex-start',
-                            background: isMe ? '#007bff' : '#e9ecef',
-                            color: isMe ? 'white' : 'black',
-                            padding: '10px',
-                            borderRadius: '10px',
-                            marginBottom: '10px',
-                            maxWidth: '70%'
-                        }}>
-                            {msg.content}
-                            {msg.product && <div style={{ fontSize: '10px', opacity: 0.8 }}>Ref: Product</div>}
+                {/* Room Header */}
+                <div className="bg-black/50 border-b border-border p-3 flex justify-between items-center z-10">
+                    <div className="flex items-center gap-3">
+                        <Link to="/chat" className="text-text-secondary hover:text-white transition">
+                            <i className="fas fa-chevron-left"></i>
+                        </Link>
+
+                        {!otherUser ?
+                            <h3 className="text-sm font-bold text-white font-mono uppercase tracking-wider">
+                                {title}
+                            </h3> :
+
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded bg-black border border-border overflow-hidden relative">
+                                    {isAnonymousContext ?
+                                        <div className="w-full h-full flex items-center justify-center bg-bg text-text-secondary">
+                                            <i className="fas fa-user-secret"></i>
+                                        </div> :
+
+                                        <img
+                                            src={otherUser.avatar || `https://ui-avatars.com/api/?name=${otherUser.name}&background=0b0e11&color=fff`}
+                                            className="w-full h-full object-cover" />
+
+                                    }
+                                    {/* Online Status Dot */}
+                                    <div className="absolute bottom-0 right-0 w-2 h-2 bg-bull rounded-full border border-black transform translate-x-1/3 translate-y-1/3"></div>
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold text-white font-mono leading-none">
+                                        {title.toUpperCase()}
+                                    </h3>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="text-[8px] text-bull font-mono border border-bull/20 px-1 rounded bg-bull/5">SECURE_LINK_ESTABLISHED</span>
+                                        <span className="text-[8px] text-text-secondary font-mono">ID: {otherUser._id.toString().substring(0, 6)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <div className="flex flex-col items-end">
+                            <span className="text-[8px] text-text-secondary font-mono">ENCRYPTION: AES-256</span>
+                            <span className="text-[8px] text-text-secondary font-mono">SIGNAL: <span className="text-bull">STRONG</span></span>
                         </div>
-                    );
-                })}
-                <div ref={scrollRef} />
-            </div>
+                    </div>
+                </div>
 
-            <form onSubmit={sendMessage} style={{ padding: '10px', borderTop: '1px solid #ddd', display: 'flex' }}>
-                <input
-                    type="text"
-                    value={newMessage}
-                    onChange={e => setNewMessage(e.target.value)}
-                    style={{ flex: 1, padding: '10px' }}
-                    placeholder="Type a message..."
-                />
-                <button type="submit" style={{ padding: '10px 20px' }}>Send</button>
-            </form>
-        </div>
-    );
+                {/* Chat Messages Area */}
+                <div className="chat-messages flex-grow overflow-y-auto p-4 space-y-4 bg-bg relative">
+                    {/* Background Grid */}
+                    <div className="absolute inset-0 opacity-5 pointer-events-none"
+                        style={{
+                            backgroundImage: 'linear-gradient(#2d3748 1px, transparent 1px), linear-gradient(90deg, #2d3748 1px, transparent 1px)',
+                            backgroundSize: '20px 20px'
+                        }}>
+                    </div>
+
+                    {messages.map((msg, index) => {
+                        const isMe = msg.sender._id?.toString() === user?._id?.toString() || msg.sender.toString() === user?._id?.toString();
+                        return (
+                            <div key={index} className={`relative z-10 flex w-full ${isMe ? 'justify-end' : 'justify-start'}`}>
+                                <div className="max-w-[70%]">
+                                    {/* Sender Label */}
+                                    <div className={`text-[8px] font-mono mb-1 ${isMe ? 'text-right text-action' : 'text-left text-bear'}`}>
+                                        {isMe ? 'YOU' : 'REMOTE_NODE'}
+                                    </div>
+
+                                    {/* Message Bubble */}
+                                    <div className={`px-3 py-2 rounded text-xs font-mono leading-relaxed border ${isMe ?
+                                        'bg-action/10 text-white border-action/30 rounded-tr-none' :
+                                        'bg-surface text-text-secondary border-border rounded-tl-none'}`}>
+                                        {msg.content}
+                                    </div>
+
+                                    {/* Timestamp */}
+                                    <div className={`text-[8px] text-text-secondary/50 mt-1 font-mono ${isMe ? 'text-right' : 'text-left'}`}>
+                                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </div>
+                                </div>
+                            </div>);
+
+                    })}
+                    <div ref={messagesEndRef} />
+                </div>
+
+                {/* Chat Input Area */}
+                <div className="bg-surface border-t border-border p-3 z-10">
+                    <form onSubmit={handleSendMessage} className="flex items-center gap-3">
+                        <div className="flex-grow relative">
+                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-action font-mono text-xs">{">"}</span>
+                            <input
+                                type="text"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                className="w-full bg-bg border border-border rounded py-2 pl-6 pr-3 text-sm text-white focus:border-action focus:ring-1 focus:ring-action outline-none font-mono placeholder-text-secondary/30 transition shadow-[inset_0_1px_3px_rgba(0,0,0,0.3)]"
+                                placeholder="TRANSMIT MESSAGE..."
+                                required
+                                autoComplete="off" />
+
+                        </div>
+                        <button type="submit"
+                            className="bg-action hover:bg-blue-600 text-white p-2 rounded border border-action/50 transition shadow-[0_0_10px_rgba(41,98,255,0.2)]">
+                            <i className="fas fa-paper-plane text-xs"></i>
+                        </button>
+                    </form>
+                </div>
+
+                {/* Scanline Overlay */}
+                <div className="absolute inset-0 pointer-events-none z-50 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%]"></div>
+            </div>
+        </div>);
+
 };
 
 export default ChatRoom;
