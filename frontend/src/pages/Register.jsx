@@ -1,52 +1,77 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import { FaUserPlus, FaGoogle, FaGithub, FaCamera, FaUser, FaEnvelope, FaIdCard, FaPhone, FaLock } from 'react-icons/fa';
-import '../styles/Auth.css';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Register = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        password: '',
         studentId: '',
         contactNumber: '',
-        password: '',
-        confirmPassword: ''
     });
+    const [avatar, setAvatar] = useState(null);
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [avatarPreview, setAvatarPreview] = useState(null);
+    const [searchParams] = useSearchParams();
+    const { register } = useAuth();
     const navigate = useNavigate();
 
-    const { name, email, studentId, contactNumber, password, confirmPassword } = formData;
+    useEffect(() => {
+        const errorParam = searchParams.get('error');
+        if (errorParam) {
+            setError(decodeURIComponent(errorParam));
+        }
+    }, [searchParams]);
 
-    const onChange = (e) =>
+    const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-    const onSubmit = async (e) => {
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setAvatar(file);
+        if (file) {
+            setAvatarPreview(URL.createObjectURL(file));
+        } else {
+            setAvatarPreview(null);
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
-            return;
+        setError('');
+
+        // Frontend strict check for IUT email just as a UX improvement
+        if (!formData.email.endsWith('@iut-dhaka.edu')) {
+            return setError('Please use a valid @iut-dhaka.edu email');
         }
 
-        setLoading(true);
         try {
-            // Note: Avatar upload is not implemented in this frontend form version yet as per screenshot
-            const res = await axios.post('/auth/register', {
-                name,
-                email,
-                studentId,
-                contactNumber,
-                password
+            const data = new FormData();
+            Object.keys(formData).forEach(key => {
+                data.append(key, formData[key]);
             });
 
-            if (res.data.action === 'verify-otp') {
-                navigate(`/verify-otp?email=${email}`);
+            if (avatar) {
+                data.append('avatar', avatar);
+            }
+
+            const res = await register(data);
+
+            if (res.redirect) {
+                if (res.email) {
+                    navigate(res.redirect + `?email=${res.email}`);
+                } else {
+                    navigate(res.redirect);
+                }
+            } else {
+                // Fallback
+                navigate('/login');
             }
         } catch (err) {
             setError(err.response?.data?.error || 'Registration failed');
-        } finally {
-            setLoading(false);
         }
     };
 
