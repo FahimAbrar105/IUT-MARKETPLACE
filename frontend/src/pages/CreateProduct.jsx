@@ -3,38 +3,63 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
 const CreateProduct = () => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [price, setPrice] = useState('');
-    const [category, setCategory] = useState('Electronics');
-    const [isAnonymous, setIsAnonymous] = useState(false);
-    const [images, setImages] = useState(null);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const [formData, setFormData] = useState({
+        title: '',
+        price: '',
+        category: 'Books',
+        description: '',
+        isAnonymous: false
+    });
+
+    const [images, setImages] = useState([]);
+    const [previews, setPreviews] = useState([]);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleCheckboxChange = (e) => {
+        setFormData((prev) => ({
+            ...prev,
+            isAnonymous: e.target.checked
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('price', price);
-        formData.append('category', category);
-        if (isAnonymous) formData.append('isAnonymous', 'on');
-        if (images) {
-            for (let i = 0; i < images.length; i++) {
-                formData.append('images', images[i]);
-            }
-        }
+        setLoading(true);
+        setError('');
 
         try {
-            await axios.post('/products', formData, {
+            const data = new FormData();
+            data.append('title', formData.title);
+            data.append('price', formData.price);
+            data.append('category', formData.category);
+            data.append('description', formData.description);
+            data.append('isAnonymous', formData.isAnonymous.toString());
+
+            images.forEach((image) => {
+                data.append('images', image);
+            });
+
+            await axios.post('/products', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+
             navigate('/dashboard');
         } catch (err) {
-            console.error(err);
-            alert('Failed to create product');
+            setError(err.response?.data?.error || 'Failed to create product listing');
+        } finally {
+            setLoading(false);
         }
     };
 
