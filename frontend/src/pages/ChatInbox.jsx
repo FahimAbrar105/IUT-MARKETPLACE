@@ -4,6 +4,20 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const ChatInbox = () => {
     const { user } = useAuth();
     const [conversations, setConversations] = useState([]);
@@ -23,6 +37,7 @@ const ChatInbox = () => {
         };
         fetchConversations();
     }, []);
+
     const handleDelete = async (e, conversation) => {
         e.preventDefault();
         e.stopPropagation();
@@ -35,8 +50,6 @@ const ChatInbox = () => {
             console.error("Error deleting conversation", err);
         }
     };
-
-    if (loading) return <div>Loading...</div>;
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl">
