@@ -1,10 +1,16 @@
+// Chat Controller
+// Tutorial: https://www.youtube.com/watch?v=ZKEqqIO7n-k (Realtime Chat with Socket.io)
+// Source: https://mongoosejs.com/docs/api/aggregate.html
 const Message = require('../models/Message');
 const User = require('../models/User');
 
+/*
+ * Get chat UI or start new chat
+ */
 exports.startChat = async (req, res) => {
     try {
         const otherUser = await User.findById(req.params.userId);
-        if (!otherUser) return res.status(404).json({ error: 'User not found' });
+        if (!otherUser) return res.redirect('/products');
 
         let chatPartnerName = otherUser.name;
         let isAnonymousContext = false;
@@ -22,6 +28,10 @@ exports.startChat = async (req, res) => {
         }
 
         // Fetch valid previous messages
+        // Filter by product if provided, otherwise fetch generic chats OR all chats between them?
+        // User wants "on chat cards there will be details about ... the product"
+        // So we strictly separate chats by product.
+
         let query = {
             $or: [
                 { sender: req.user.id, receiver: otherUser._id },
@@ -33,23 +43,32 @@ exports.startChat = async (req, res) => {
             query.product = productId;
         }
 
+        // Hide messages deleted by user
         query.hiddenFor = { $ne: req.user.id };
 
         const messages = await Message.find(query).sort({ timestamp: 1 });
 
+        // Mark messages as read
         await Message.updateMany(
             { sender: otherUser._id, receiver: req.user.id, read: false }, // Only from them to me
             { read: true }
         );
 
+        // Update local unreadCount
+        const newUnreadCount = await Message.countDocuments({
+            receiver: req.user._id,
+            read: false,
+            hiddenFor: { $ne: req.user.id }
+        });
+        res.locals.unreadCount = newUnreadCount;
+
         res.json({
-            chatPartner: {
-                id: otherUser._id,
-                name: chatPartnerName,
-                isAnonymous: isAnonymousContext
-            },
+            user: req.user,
+            otherUser: { ...otherUser.toObject(), name: chatPartnerName },
             messages,
-            productId
+            isAnonymousContext,
+            productId,
+            unreadCount: newUnreadCount
         });
     } catch (err) {
         console.error(err);
@@ -153,7 +172,7 @@ exports.getConversations = async (req, res) => {
             let showAsAnonymous = false;
 
             if (!isMyProduct && convo.isAnonymous) {
-
+                // I am Buyer, Product is Anonymous -> Seller is Anonymous
                 showAsAnonymous = true;
 
                 displayName = "Anonymous Seller";
@@ -171,10 +190,7 @@ exports.getConversations = async (req, res) => {
         });
 
         // Render the inbox
-        res.json({
-            count: formattedConversations.length,
-            conversations: formattedConversations
-        });
+        res.json({ conversations: formattedConversations, user: req.user });
 
     } catch (err) {
         console.error(err);
@@ -205,45 +221,7 @@ exports.deleteConversation = async (req, res) => {
             $addToSet: { hiddenFor: req.user.id }
         });
 
-        res.json({ success: true, message: 'Conversation deleted' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server Error' });
-    }
-};
-
-/*
- * Send Message (API Endpoint)
- */
-exports.sendMessage = async (req, res) => {
-    try {
-        const { receiverId, content, productId } = req.body;
-
-        if (!receiverId || !content) {
-            return res.status(400).json({ error: 'Receiver and Content are required' });
-        }
-
-        // Save to DB
-        const newMessage = await Message.create({
-            sender: req.user.id,
-            receiver: receiverId,
-            content,
-            product: (productId && productId.length > 0) ? productId : null,
-            read: false,
-            timestamp: Date.now()
-        });
-
-        // Real-time dispatch via Socket.io
-        const io = req.app.get('io');
-        if (io) {
-            io.to(receiverId).emit('message', newMessage);
-            // Also emit to sender (for multi-device sync)
-            if (req.user.id !== receiverId) {
-                io.to(req.user.id).emit('message', newMessage);
-            }
-        }
-
-        res.status(201).json({ message: 'Message sent', data: newMessage });
+        res.json({ success: true, redirect: '/chat' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server Error' });
