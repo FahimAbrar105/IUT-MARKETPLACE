@@ -1,24 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+
 
 const ChatInbox = () => {
+    const { user } = useAuth();
     const [conversations, setConversations] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchConversations = async () => {
             try {
+
                 const res = await axios.get('/chat');
-                setConversations(res.data.conversations);
+                setConversations(res.data.conversations || []);
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching conversations", err);
             } finally {
                 setLoading(false);
             }
         };
         fetchConversations();
     }, []);
+    const handleDelete = async (e, conversation) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!window.confirm('ERASE COMM LOG? This cannot be undone.')) return;
+
+        try {
+            await axios.post(`/chat/delete/${conversation.userId}?productId=${conversation.productId}`);
+            setConversations(conversations.filter((c) => c.userId !== conversation.userId || c.productId !== conversation.productId));
+        } catch (err) {
+            console.error("Error deleting conversation", err);
+        }
+    };
 
     if (loading) return <div>Loading...</div>;
 
@@ -36,6 +52,12 @@ const ChatInbox = () => {
                                         <strong>{convo.name}</strong>
                                         <div style={{ fontSize: '12px', color: 'gray' }}>{convo.lastMessage}</div>
                                     </div>
+                                    <button
+                                        onClick={(e) => handleDelete(e, convo)}
+                                        className="text-text-secondary hover:text-bear transition text-xs opacity-0 group-hover:opacity-100 p-2">
+
+                                        <i className="fas fa-trash"></i>
+                                    </button>
                                     {convo.productImage && (
                                         <img src={convo.productImage.startsWith('http') ? convo.productImage : `http://localhost:5000/${convo.productImage}`} alt="Product" style={{ width: '40px', height: '40px', objectFit: 'cover', marginLeft: 'auto' }} />
                                     )}
