@@ -16,73 +16,72 @@ const ChatRoom = () => {
     const scrollRef = useRef(null);
 
     useEffect(() => {
-        // Fetch initial chat data
-        const fetchChat = async () => {
+        if (!user || !otherUserId) return;
+
+        // Join room
+        socket.emit('join', user._id);
+
+        // Fetch Room Data
+        const fetchRoomData = async () => {
             try {
-                const res = await axios.get(`/chat/start/${userId}?productId=${productId || ''}`);
-                setMessages(res.data.messages);
-                setChatPartner(res.data.chatPartner);
 
-                // Also need my own ID for rendering, fetch dashboard or profile
-                const meRes = await axios.get('/dashboard');
-                setCurrentUser(meRes.data.user);
+                const res = await axios.get(`/chat/start/${otherUserId}?productId=${productId || ''}`);
 
+                setMessages(res.data.messages || []);
+                setOtherUser(res.data.otherUser);
+                setTitle(res.data.title || 'Chat');
+                setIsAnonymousContext(res.data.isAnonymousContext); // Ensure backend sends this
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching chat room", err);
+            } finally {
+                setLoading(false);
             }
         };
-        fetchChat();
 
-        // Socket setup
-        socket.current = io('/', {
-            path: '/socket.io',
-        });
+        fetchRoomData();
 
-        socket.current.on('connect', () => {
-            // Try to join if we already know who we are
-            if (currentUser) {
-                socket.current.emit('join', currentUser.id || currentUser._id);
+        const messageHandler = (msg) => {
+
+            if ((msg.sender === otherUserId || msg.sender === user._id) && (
+                !msg.productId || msg.productId === productId)) {
+                // We need to format it like a Message object
+                setMessages((prev) => [...prev, {
+                    _id: Date.now().toString(),
+                    sender: msg.sender === user._id ? { _id: user._id, name: user.name } : { _id: otherUserId, name: 'Remote' },
+                    content: msg.content,
+                    timestamp: new Date().toISOString()
+                }]);
             }
-        });
+        };
 
-        socket.current.on('message', (msg) => {
-            setMessages(prev => [...prev, msg]);
-        });
+        socket.on('message', messageHandler);
 
         return () => {
-            socket.current.disconnect();
+            socket.off('message', messageHandler);
         };
-    }, [userId, productId, currentUser]); // Added currentUser to ensure reconnection if user loads/changes
+    }, [user, otherUserId, productId]);
 
     // Dedicated effect to join room when currentUser availability changes while socket exists
     useEffect(() => {
-        if (currentUser && socket.current && socket.current.connected) {
-            socket.current.emit('join', currentUser.id || currentUser._id);
-        }
-    }, [currentUser]);
-
-    useEffect(() => {
-        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const sendMessage = async (e) => {
+    const handleSendMessage = (e) => {
         e.preventDefault();
-        if (!newMessage.trim()) return;
+        if (!newMessage.trim() || !user || !otherUserId) return;
 
-        try {
-            await axios.post('/chat/send', {
-                receiverId: userId,
-                content: newMessage,
-                productId
-            });
-            // Socket will receive the message back because of io.to(sender).emit defined in backend
-            setNewMessage('');
-        } catch (err) {
-            console.error(err);
-        }
+        socket.emit('chatMessage', {
+            sender: user._id,
+            receiver: otherUserId,
+            content: newMessage,
+            productId: productId
+        });
+
+
+        setNewMessage('');
     };
 
-    if (!chatPartner || !currentUser) return <div>Loading...</div>;
+    if (loading) return <div className="text-center text-text-secondary py-20 font-mono">ESTABLISHING SECURE CONNECTION...</div>;
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', maxWidth: '600px', margin: 'auto' }}>
