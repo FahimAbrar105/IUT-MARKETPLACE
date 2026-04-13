@@ -1,4 +1,19 @@
-node_modules
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Environment Variables (Crucial for GitHub security!)
 .env
-package-lock.json
-frontend/package-lock.json
+env
+
+# Lockfiles (Standard practice is to commit these, remove the '#' if you really want to ignore them)
+# package-lock.json
+# frontend/package-lock.json
+
+# Log files (Prevents pushing error logs)
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files (Prevents pushing Mac hidden files if anyone uses a Mac)
+.DS_Store
