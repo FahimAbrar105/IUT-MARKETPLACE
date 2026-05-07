@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Limit Order Schema
 const LimitOrderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -9,9 +10,9 @@ const LimitOrderSchema = new mongoose.Schema({
     sector: {
         type: String,
         required: true,
-        enum: ['Electronics', 'Clothing', 'Books', 'Furniture', 'Stationery', 'Other']
+        enum: ['Electronics', 'Clothing', 'Books', 'Furniture', 'Other'] // Align with Product categories
     },
-    maxPrice: {
+    maxPrice: { // The "Strike Price"
         type: Number,
         required: true
     },

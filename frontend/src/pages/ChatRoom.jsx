@@ -37,7 +37,7 @@ const ChatRoom = () => {
                 setMessages(res.data.messages || []);
                 setOtherUser(res.data.otherUser);
                 setTitle(res.data.title || 'Chat');
-                setIsAnonymousContext(res.data.isAnonymousContext); // Ensure backend sends this
+                setIsAnonymousContext(res.data.isAnonymousContext);
             } catch (err) {
                 console.error("Error fetching chat room", err);
             } finally {

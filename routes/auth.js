@@ -1,36 +1,30 @@
-//  https://youtu.be/6FOq4cUdH8k?si=CpxiMbVsN-prrvD8
-//  https://youtube.com/playlist?list=PL4cUxeGkcC9jdm7QX143aMLAqyM-jTZ2x&si=bTYYFiyuN3Gyo8YH
-//  https://youtu.be/dBl5seCbzYA?si=HCAEhols7s_XgdWK
-//  https://expressjs.com/en/guide/routing.html
+// Authentication Routes
+// Main Auth: https://youtu.be/6FOq4cUdH8k?si=CpxiMbVsN-prrvD8
+// Social Login: https://youtube.com/playlist?list=PL4cUxeGkcC9jdm7QX143aMLAqyM-jTZ2x&si=bTYYFiyuN3Gyo8YH
+// OTP Logic: https://youtu.be/dBl5seCbzYA?si=HCAEhols7s_XgdWK
+// Source: https://expressjs.com/en/guide/routing.html
 const express = require('express');
 const router = express.Router();
-const { register, login, logout, verifyOtp, verifyForm } = require('../controllers/authController');
+const { register, login, logout, verifyOtp, resendOtp, getMe, updateAvatar, removeAvatar, completeProfile } = require('../controllers/authController');
 
 const upload = require('../middleware/upload');
-
-router.get('/register', (req, res) => res.json({ message: "POST to /auth/register to create an account" }));
-router.post('/register', upload.single('avatar'), register);
-
-router.get('/verify', verifyForm);
-router.post('/verify', verifyOtp);
-
-router.get('/login', (req, res) => res.json({ message: "POST to /auth/login to authenticate" }));
-router.post('/login', login);
-
-router.get('/logout', logout);
-
-const { completeProfileForm, completeProfile } = require('../controllers/authController');
-router.get('/complete-profile', completeProfileForm);
-router.post('/complete-profile', upload.single('avatar'), completeProfile);
-
-const { updateAvatar, removeAvatar } = require('../controllers/authController');
-// Avatar management
 const { protect } = require('../middleware/auth');
+
+router.post('/register', upload.single('avatar'), register);
+router.post('/login', login);
+router.get('/logout', logout);
+router.post('/verify-otp', verifyOtp);
+router.post('/resend-otp', resendOtp);
+router.post('/complete-profile', protect, upload.single('avatar'), completeProfile);
+
+router.get('/me', protect, getMe);
+
+// Avatar Management
 
 router.post('/update-avatar', protect, upload.single('avatar'), updateAvatar);
 router.post('/remove-avatar', protect, removeAvatar);
 
-// Google auth
+// Google Auth
 const passport = require('passport');
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
@@ -40,19 +34,19 @@ router.get('/google/callback', (req, res, next) => {
         if (!user) {
             // Check for specific restriction message
             if (info && info.message && info.message.includes('@iut-dhaka.edu')) {
-                req.flash('error', info.message);
-                return res.redirect('/auth/register');
+                return res.redirect('http://localhost:5173/register?error=' + encodeURIComponent(info.message));
             }
-            req.flash('error', 'Authentication failed.');
-            return res.redirect('/auth/login');
+            return res.redirect('http://localhost:5173/login?error=AuthenticationFailed');
         }
-        // OTP required for social Lgins
+        // Check verification status
+        // OTP Required for Social Logins as requested.
         if (!user.isVerified) {
             if (!user.otp || user.otpExpires < Date.now()) {
                 user.otp = Math.floor(100000 + Math.random() * 900000).toString();
                 user.otpExpires = Date.now() + 5 * 60 * 1000; // 5 mins
                 await user.save();
 
+                // Send Email
                 const sendEmail = require('../utils/sendEmail');
                 const emailTemplate = `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
@@ -79,17 +73,17 @@ router.get('/google/callback', (req, res, next) => {
                     // Email failed
                 }
             }
-            const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
-            return res.redirect(`${FRONTEND_URL}/login?error=Verification email sent to ${user.email}`);
+            return res.redirect(`http://localhost:5173/verify?email=${user.email}`);
         }
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
 
             // Check if profile is complete
-            // if (!user.studentId || !user.contactNumber) {
-            //     return res.redirect('/auth/complete-profile');
-            // }
+            if (!user.studentId || !user.contactNumber) {
+                // Redirect to dashboard with a query param to trigger an incomplete profile modal/form if implemented
+                return res.redirect('http://localhost:5173/dashboard?incomplete=true');
+            }
 
             const jwt = require('jsonwebtoken');
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -98,13 +92,12 @@ router.get('/google/callback', (req, res, next) => {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: 30 * 24 * 60 * 60 * 1000
             });
-            const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
-            res.redirect(`${FRONTEND_URL}/dashboard`);
+            res.redirect('http://localhost:5173/dashboard');
         });
     })(req, res, next);
 });
 
-// GitHub auth
+// GitHub Auth
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
 router.get('/github/callback', (req, res, next) => {
@@ -112,13 +105,11 @@ router.get('/github/callback', (req, res, next) => {
         if (err) { return next(err); }
         if (!user) {
             if (info && info.message && info.message.includes('@iut-dhaka.edu')) {
-                req.flash('error', info.message);
-                return res.redirect('/auth/register');
+                return res.redirect('http://localhost:5173/register?error=' + encodeURIComponent(info.message));
             }
-            req.flash('error', 'Authentication failed (Email might be private or invalid).');
-            return res.redirect('/auth/login');
+            return res.redirect('http://localhost:5173/login?error=AuthenticationFailed');
         }
-        // OTP required
+        // OTP Required
         if (!user.isVerified) {
             if (!user.otp || user.otpExpires < Date.now()) {
                 user.otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -151,17 +142,16 @@ router.get('/github/callback', (req, res, next) => {
                     // Email failed
                 }
             }
-            const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
-            return res.redirect(`${FRONTEND_URL}/login?error=Verification email sent to ${user.email}`);
+            return res.redirect(`http://localhost:5173/verify?email=${user.email}`);
         }
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
 
             // Check if profile is complete
-            // if (!user.studentId || !user.contactNumber) {
-            //     return res.redirect('/auth/complete-profile');
-            // }
+            if (!user.studentId || !user.contactNumber) {
+                return res.redirect('http://localhost:5173/dashboard?incomplete=true');
+            }
 
             const jwt = require('jsonwebtoken');
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -170,8 +160,7 @@ router.get('/github/callback', (req, res, next) => {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: 30 * 24 * 60 * 60 * 1000
             });
-            const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
-            res.redirect(`${FRONTEND_URL}/dashboard`);
+            res.redirect('http://localhost:5173/dashboard');
         });
     })(req, res, next);
 });

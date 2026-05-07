@@ -96,7 +96,7 @@ const ProductDetails = () => {
 
     const handleAddLongPosition = () => {
         const savedHoldings = JSON.parse(localStorage.getItem('terminal_portfolio') || '[]');
-        
+
         if (savedHoldings.some(h => h.id === product._id)) {
             alert('Position already held in portfolio.');
             return;

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+// User Schema
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -25,7 +26,7 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        select: false
+        select: false // Do not return password by default
     },
     googleId: String,
     githubId: String,
@@ -43,23 +44,24 @@ const UserSchema = new mongoose.Schema({
     },
     otp: String,
     otpExpires: Date,
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
     watchlist: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product'
     }],
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
     lastLogout: {
         type: Date,
         default: null
     }
 });
 
-// https://www.npmjs.com/package/bcryptjs
+// Encrypt password using bcrypt
+// Source: https://www.npmjs.com/package/bcryptjs
 UserSchema.pre('save', async function () {
-    // If password is not modified or if it doesn't exist, skip hashing
+    // If password is not modified OR if it doesn't exist (e.g. OAuth), skip hashing
     if (!this.isModified('password') || !this.password) {
         return;
     }

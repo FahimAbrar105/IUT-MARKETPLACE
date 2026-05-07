@@ -1,46 +1,106 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
+import Register from './pages/Register';
+import Verify from './pages/Verify';
+import CompleteProfile from './pages/CompleteProfile';
 import Dashboard from './pages/Dashboard';
-import Marketplace from './pages/Marketplace';
-import ProductDetails from './pages/ProductDetails';
-import CreateProduct from './pages/CreateProduct';
 import ChatInbox from './pages/ChatInbox';
 import ChatRoom from './pages/ChatRoom';
-import { AuthProvider, useAuth } from './context/AuthContext'; // Import AuthProvider
-
-const PrivateRoute = ({ children }) => {
-  //   const { user, loading } = useAuth(); // We'll implement this later
-  //   if (loading) return <div>Loading...</div>;
-  //   return user ? children : <Navigate to="/login" />;
-  return children; // For now, bypass auth check in frontend routing to test connection
-};
-
-import Register from './pages/Register';
-import VerifyOtp from './pages/VerifyOtp';
+import ProductDetails from './pages/ProductDetails';
+import RequireAuth from './components/RequireAuth';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import Marketplace from './pages/Marketplace';
+import CreateProduct from './pages/CreateProduct';
 
 function App() {
   return (
-    <Router>
-      {/* <AuthProvider> */}
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/verify-otp" element={<VerifyOtp />} />
-        <Route path="/" element={<Navigate to="/dashboard" />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/complete-profile" element={<CompleteProfile />} />
 
-        <Route path="/dashboard" element={
-          <Dashboard />
-        } />
-        <Route path="/products" element={<Marketplace />} />
-        <Route path="/products/create" element={<CreateProduct />} />
-        <Route path="/products/:id" element={<ProductDetails />} />
+          <Route
+            path="/"
+            element={
+              <Layout>
+                <Home />
+              </Layout>
+            } />
 
-        <Route path="/chat" element={<ChatInbox />} />
-        <Route path="/chat/start/:userId" element={<ChatRoom />} />
-      </Routes>
-      {/* </AuthProvider> */}
-    </Router>
-  );
+
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              </RequireAuth>
+            } />
+
+
+          <Route
+            path="/chat"
+            element={
+              <RequireAuth>
+                <Layout>
+                  <ChatInbox />
+                </Layout>
+              </RequireAuth>
+            } />
+
+
+          <Route
+            path="/chat/:userId"
+            element={
+              <RequireAuth>
+                <Layout>
+                  <ChatRoom />
+                </Layout>
+              </RequireAuth>
+            } />
+
+
+          <Route
+            path="/products/create"
+            element={
+              <RequireAuth>
+                <Layout>
+                  <CreateProduct />
+                </Layout>
+              </RequireAuth>
+            } />
+
+
+          <Route
+            path="/products/:id"
+            element={
+              <RequireAuth>
+                <Layout>
+                  <ProductDetails />
+                </Layout>
+              </RequireAuth>
+            } />
+
+          <Route
+            path="/products"
+            element={
+              <RequireAuth>
+                <Layout>
+                  <Marketplace />
+                </Layout>
+              </RequireAuth>
+            } />
+
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>);
+
 }
 
 export default App;

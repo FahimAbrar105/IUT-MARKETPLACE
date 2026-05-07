@@ -7,58 +7,58 @@ import { useAuth } from '../context/AuthContext';
 
 
 const Layout = ({ children }) => {
-  const { user, logout, updateAvatar, removeAvatar } = useAuth();
-  const navigate = useNavigate();
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [randomCode, setRandomCode] = useState('00');
-  const [shouldFlicker, setShouldFlicker] = useState(false);
-  const [avatarLoading, setAvatarLoading] = useState(false);
+    const { user, logout, updateAvatar, removeAvatar } = useAuth();
+    const navigate = useNavigate();
+    const [profileOpen, setProfileOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [randomCode, setRandomCode] = useState('00');
+    const [shouldFlicker, setShouldFlicker] = useState(false);
+    const [avatarLoading, setAvatarLoading] = useState(false);
 
-  const handleRemoveAvatar = async () => {
-    try {
-        setAvatarLoading(true);
-        await removeAvatar();
-    } catch (err) {
-        console.error("Failed to remove avatar", err);
-    } finally {
-        setAvatarLoading(false);
-    }
-  };
+    const handleRemoveAvatar = async () => {
+        try {
+            setAvatarLoading(true);
+            await removeAvatar();
+        } catch (err) {
+            console.error("Failed to remove avatar", err);
+        } finally {
+            setAvatarLoading(false);
+        }
+    };
 
-  const handleUpdateAvatar = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const handleUpdateAvatar = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    const formData = new FormData();
-    formData.append('avatar', file);
+        const formData = new FormData();
+        formData.append('avatar', file);
 
-    try {
-        setAvatarLoading(true);
-        await updateAvatar(formData);
-    } catch (err) {
-        console.error("Failed to update avatar", err);
-    } finally {
-        setAvatarLoading(false);
-    }
-  };
+        try {
+            setAvatarLoading(true);
+            await updateAvatar(formData);
+        } catch (err) {
+            console.error("Failed to update avatar", err);
+        } finally {
+            setAvatarLoading(false);
+        }
+    };
 
-  // Dynamic number effect for logo
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRandomCode(Math.floor(Math.random() * 99).toString().padStart(2, '0'));
-      setShouldFlicker(Math.random() > 0.8);
-    }, 80);
-    return () => clearInterval(interval);
-  }, []);
+    // Dynamic number effect for logo
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setRandomCode(Math.floor(Math.random() * 99).toString().padStart(2, '0'));
+            setShouldFlicker(Math.random() > 0.8);
+        }, 80);
+        return () => clearInterval(interval);
+    }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
-  return (
-    <div className="bg-bg text-text-primary font-sans antialiased min-h-screen flex flex-col">
+    return (
+        <div className="bg-bg text-text-primary font-sans antialiased min-h-screen flex flex-col">
             {/* Header / Navigation */}
             <nav className="bg-surface border-b border-border sticky top-0 z-50">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -87,7 +87,7 @@ const Layout = ({ children }) => {
                         <Link to="/products" className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-white hover:bg-border/50 rounded transition">MARKETS</Link>
 
                         {user &&
-            <>
+                            <>
                                 <Link to="/products/create" className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-white hover:bg-border/50 rounded transition flex items-center space-x-2">
                                     <i className="fas fa-plus text-xs"></i>
                                     <span>IPO</span>
@@ -100,14 +100,14 @@ const Layout = ({ children }) => {
                                 {/* Profile Dropdown */}
                                 <div className="relative ml-4">
                                     <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center space-x-2 focus:outline-none hover:bg-border/50 p-1 rounded transition group">
-                  
+                                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                        className="flex items-center space-x-2 focus:outline-none hover:bg-border/50 p-1 rounded transition group">
+
                                         <img
-                    src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=0b0e11&color=fff&size=64`}
-                    alt="Profile"
-                    className="w-8 h-8 rounded border border-border bg-black object-cover group-hover:border-action transition" />
-                  
+                                            src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=0b0e11&color=fff&size=64`}
+                                            alt="Profile"
+                                            className="w-8 h-8 rounded border border-border bg-black object-cover group-hover:border-action transition" />
+
                                         <div className="flex flex-col items-start">
                                             <span className="text-xs font-mono text-white group-hover:text-action transition">{user.name.split(' ')[0]}</span>
                                             <span className="text-[10px] text-bull font-mono">ONLINE</span>
@@ -116,7 +116,7 @@ const Layout = ({ children }) => {
                                     </button>
 
                                     {isMenuOpen &&
-                <>
+                                        <>
                                             <div className="fixed inset-0 z-40" onClick={() => setIsMenuOpen(false)}></div>
                                             <div className="absolute right-0 mt-2 w-56 bg-surface border border-border rounded shadow-xl py-1 z-50">
                                                 <div className="px-4 py-3 border-b border-border">
@@ -125,9 +125,9 @@ const Layout = ({ children }) => {
                                                 </div>
 
                                                 <button
-                      onClick={() => {setIsMenuOpen(false);setProfileOpen(true);}}
-                      className="block w-full text-left px-4 py-2 text-sm text-text-secondary hover:bg-bg hover:text-white transition group">
-                      
+                                                    onClick={() => { setIsMenuOpen(false); setProfileOpen(true); }}
+                                                    className="block w-full text-left px-4 py-2 text-sm text-text-secondary hover:bg-bg hover:text-white transition group">
+
                                                     <i className="fas fa-id-card mr-2 text-action group-hover:text-white"></i>
                                                     MY PROFILE
                                                 </button>
@@ -141,23 +141,23 @@ const Layout = ({ children }) => {
                                                 </button>
                                             </div>
                                         </>
-                }
+                                    }
                                 </div>
                             </>
-            }
+                        }
                         {!user &&
-            <div className="flex items-center space-x-4 ml-4">
+                            <div className="flex items-center space-x-4 ml-4">
                                 <Link to="/login" className="text-sm font-medium text-text-secondary hover:text-white">LOGIN</Link>
                                 <Link to="/register" className="px-4 py-1.5 text-sm font-bold bg-action hover:bg-blue-600 text-white rounded">JOIN MARKETPLACE</Link>
                             </div>
-            }
+                        }
                     </div>
                 </div>
             </nav>
 
             {/* Profile Modal */}
             {profileOpen && user &&
-      <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
                     <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setProfileOpen(false)}></div>
                     <div className="relative bg-surface border border-border rounded-lg shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
                         <div className="bg-bg border-b border-border p-6 flex justify-between items-center bg-gradient-to-r from-bg to-surface">
@@ -202,12 +202,12 @@ const Layout = ({ children }) => {
                             {/* Action Buttons */}
                             <div className="mt-8 flex gap-3 relative">
                                 {avatarLoading && <div className="absolute inset-0 z-10 bg-surface/80 flex items-center justify-center rounded"><i className="fas fa-spinner fa-spin text-action text-xl"></i></div>}
-                                
+
                                 <label className="flex-1 bg-action hover:bg-blue-600 text-white font-bold py-3 rounded font-mono text-xs transition shadow-lg shadow-action/20 text-center cursor-pointer flex items-center justify-center">
                                     <input type="file" className="hidden" accept="image/*" onChange={handleUpdateAvatar} disabled={avatarLoading} />
                                     CHANGE PHOTO
                                 </label>
-                                
+
                                 <button onClick={handleRemoveAvatar} disabled={avatarLoading} className="flex-1 bg-bear/10 hover:bg-bear text-bear hover:text-white border border-bear/20 hover:border-bear font-bold py-3 rounded font-mono text-xs transition cursor-pointer">
                                     REMOVE PHOTO
                                 </button>

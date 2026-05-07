@@ -383,7 +383,7 @@ exports.resendOtp = async (req, res) => {
         }
 
         if (user.isVerified) {
-             return res.status(400).json({ error: 'User is already verified' });
+            return res.status(400).json({ error: 'User is already verified' });
         }
 
         // Generate new OTP, overriding old one naturally by setting field

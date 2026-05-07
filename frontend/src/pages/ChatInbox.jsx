@@ -3,21 +3,6 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const ChatInbox = () => {
     const { user } = useAuth();
     const [conversations, setConversations] = useState([]);
